@@ -6,16 +6,12 @@ import getCurrentUser from "@/app/libs/getCurrentUser";
 //api handler registration
 //(fetch data via route handler)
 export async function GET(request: Request) {
-  try {
-    const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser();
 
-    //if not having current user
-    if (!currentUser) {
-      return NextResponse.error();
-    }
-
-    return NextResponse.json(currentUser);
-  } catch (error) {
-    console.log(error);
+  //if not having current user
+  if (!currentUser) {
+    return NextResponse.error();
   }
+
+  return NextResponse.json(currentUser);
 }

@@ -10,32 +10,28 @@ interface IParams {
 }
 
 export async function GET(request: Request, { params }: { params: IParams }) {
-  try {
-    const { postId } = params;
+  const { postId } = params;
 
-    if (!postId || typeof postId !== "string") {
-      throw new Error("Invalid ID");
-    }
+  if (!postId || typeof postId !== "string") {
+    throw new Error("Invalid ID");
+  }
 
-    const invidualPost = await prisma.post.findUnique({
-      where: {
-        id: postId,
-      },
-      include: {
-        user: true,
-        comments: {
-          include: {
-            user: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+  const invidualPost = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+    include: {
+      user: true,
+      comments: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       },
-    });
+    },
+  });
 
-    return NextResponse.json(invidualPost);
-  } catch (error) {
-    console.log(error);
-  }
+  return NextResponse.json(invidualPost);
 }
