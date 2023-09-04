@@ -7,28 +7,24 @@ import prisma from "@/app/libs/prismadb";
 //dùng để protecting route (kiểm tra xem người dùng có đăng nhập hay không)
 //và trả về user hiện tại
 export default async function getCurrentUser() {
-  try {
-    //get data of user logging
-    const session = await getServerSession(authOptions);
+  //get data of user logging
+  const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) {
-      return null;
-    }
-
-    //find user whose email is equal to session.user.email
-    const currentUser = await prisma.user.findUnique({
-      where: {
-        email: session.user.email as string,
-      },
-    });
-
-    //not matched
-    if (!currentUser) {
-      return null;
-    }
-
-    return currentUser || null;
-  } catch (error: any) {
+  if (!session?.user?.email) {
     return null;
   }
+
+  //find user whose email is equal to session.user.email
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      email: session.user.email as string,
+    },
+  });
+
+  //not matched
+  if (!currentUser) {
+    return null;
+  }
+
+  return currentUser || null;
 }
