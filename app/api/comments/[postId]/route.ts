@@ -30,32 +30,28 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   });
 
   //update notification
-  try {
-    const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
+  const post = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+
+  if (post?.userId) {
+    await prisma.notification.create({
+      data: {
+        body: "Someone replied your tweet",
+        userId: post.userId,
       },
     });
 
-    if (post?.userId) {
-      await prisma.notification.create({
-        data: {
-          body: "Someone replied your tweet",
-          userId: post.userId,
-        },
-      });
-
-      await prisma.user.update({
-        where: {
-          id: post.userId,
-        },
-        data: {
-          hasNotification: true,
-        },
-      });
-    }
-  } catch (error) {
-    console.log(error);
+    await prisma.user.update({
+      where: {
+        id: post.userId,
+      },
+      data: {
+        hasNotification: true,
+      },
+    });
   }
 
   return NextResponse.json(newComment);
